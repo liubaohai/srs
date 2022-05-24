@@ -226,7 +226,12 @@ srs_error_t SrsVodStream::serve_m3u8_ctx(ISrsHttpResponseWriter * w, ISrsHttpMes
     std::stringstream ss;
     ss << "#EXTM3U" << SRS_CONSTS_LF;
     ss << "#EXT-X-STREAM-INF:BANDWIDTH=1,AVERAGE-BANDWIDTH=1" << SRS_CONSTS_LF;
-    ss << hr->path() << "?" << SRS_CONTEXT_IN_HLS << "=" << ctx;
+    std::string req_path = hr->path();
+    size_t pos = 0;
+    if ((pos = req_path.rfind("/")) != string::npos) {
+        req_path = req_path.substr(pos + 1);
+    }
+    ss << req_path << "?" << SRS_CONTEXT_IN_HLS << "=" << ctx;
     if (!hr->query().empty() && hr->query_get(SRS_CONTEXT_IN_HLS).empty())
     {
         ss << "&" << hr->query();
